@@ -502,6 +502,4 @@ with col2:
                 )
 
 
-st.markdown("---")
 
-st.caption("🪔 Made with love for Kusuma 🥰❤️")
