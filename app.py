@@ -260,7 +260,7 @@ with col1:
 
     Language = st.selectbox(
         "Pick any language😊",
-        ["Kannada", "Telugu", "English", "Hindi"]
+        ["Telugu", "English", "Hindi"]
     )
 
     st.markdown("")
