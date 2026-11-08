@@ -1,4 +1,3 @@
-
 import io
 import requests
 import streamlit as st
@@ -259,23 +258,9 @@ with col1:
         ["green", "blue", "pink", "orange", "maroon"]
     )
 
-    God = st.selectbox(
-        "Pick your favorite God😊",
-        [
-            "Lord Ganesh",
-            "Hanuman",
-            "Lord Shiva",
-            "Sai Baba",
-            "Goddess Durga",
-            "Goddess Lakshmi",
-            "Goddess Saraswathi",
-            "Lord Ram"
-        ]
-    )
-
     Language = st.selectbox(
         "Pick any language😊",
-        ["Telugu", "English", "Hindi"]
+        ["Kannada", "Telugu", "English", "Hindi"]
     )
 
     st.markdown("")
@@ -298,12 +283,12 @@ with col2:
         st.markdown("### 🪔✨ Happy Diwali ✨🪔")
 
         st.write(
-            "Select your favorite color, God and language."
+            "Select your favorite color and language."
         )
 
         st.write(
             "Your personalized Diwali blessing and "
-            "beautiful AI-generated artwork will appear here. "
+            "beautiful AI-generated artwork will appear here."
         )
 
         st.markdown("### 🪔 🌸 🎆 ")
@@ -311,7 +296,7 @@ with col2:
     else:
 
         # =============================================
-        # TEXT GENERATION - YOUR ORIGINAL CODE
+        # TEXT GENERATION
         # =============================================
 
         st.markdown("### 🪔 Your Personalized Blessing")
@@ -334,8 +319,8 @@ with col2:
                             "system",
                             "You are a warm, traditional festival poet. "
                             "Write a short, heartfelt Diwali blessing "
-                            "in {Language} focusing on {God}. "
-                            "Dedicated to a kind-hearted. "
+                            "in {Language}. "
+                            "Dedicated to a kind-hearted "
                             "Return only the plain text poem/message."
                         ),
                         (
@@ -348,7 +333,7 @@ with col2:
                 chain = pt | llm
 
                 response = chain.invoke(
-                    {"Language": Language, "God": God}
+                    {"Language": Language}
                 )
 
                 if hasattr(response, "content"):
@@ -405,20 +390,17 @@ with col2:
 
             f"The dominant color theme is {Color}. "
 
-            f"Include a respectful, beautiful divine "
-            f"depiction of {God} blessing the scene. "
-
             "Professional greeting-card artwork, "
             "square composition, detailed and vibrant. "
 
             "Leave clear space near the bottom for "
             "a greeting banner. "
 
-            "Do not generate any words, letters or watermark."
+            "The image should have happy Deepavali message written on it"
         )
 
         with st.spinner(
-            "🎨 Creating a beautiful Diwali image for"
+            "🎨 Creating a beautiful Diwali image"
         ):
 
             try:
@@ -429,7 +411,7 @@ with col2:
 
                 st.image(
                     generated_image,
-                    caption=f"Diwali artwork featuring {God}",
+                    caption="Diwali celebration artwork",
                     use_container_width=True
                 )
 
@@ -447,7 +429,7 @@ with col2:
                 st.download_button(
                     label="⬇️ Download Your Diwali Image",
                     data=image_buffer.getvalue(),
-                    file_name="Kusuma_Diwali_Wishes.png",
+                    file_name="Diwali_Wishes.png",
                     mime="image/png",
                     use_container_width=True
                 )
@@ -496,6 +478,3 @@ with col2:
                 st.error(
                     f"Image generation failed: {e}"
                 )
-
-
-
