@@ -208,7 +208,7 @@ def generate_diwali_image(prompt):
         "prompt": prompt,
         "negative_prompt": (
             "blurry, low quality, distorted faces, "
-            "bad anatomy, watermark, random letters, text, deformed"
+            "bad anatomy, watermark, random letters"
         )
     }
 
@@ -258,20 +258,6 @@ with col1:
         ["green", "blue", "pink", "orange", "maroon"]
     )
 
-    God = st.selectbox(
-        "Pick your favorite God😊",
-        [
-            "Lord Ganesh",
-            "Hanuman",
-            "Lord Shiva",
-            "Sai Baba",
-            "Goddess Durga",
-            "Goddess Lakshmi",
-            "Goddess Saraswathi",
-            "Lord Ram"
-        ]
-    )
-
     Language = st.selectbox(
         "Pick any language😊",
         ["Kannada", "Telugu", "English", "Hindi"]
@@ -297,7 +283,7 @@ with col2:
         st.markdown("### 🪔✨ Happy Diwali ✨🪔")
 
         st.write(
-            "Select your favorite color, God and language."
+            "Select your favorite color and language."
         )
 
         st.write(
@@ -310,7 +296,7 @@ with col2:
     else:
 
         # =============================================
-        # TEXT GENERATION - YOUR ORIGINAL CODE
+        # TEXT GENERATION
         # =============================================
 
         st.markdown("### 🪔 Your Personalized Blessing")
@@ -333,7 +319,7 @@ with col2:
                             "system",
                             "You are a warm, traditional festival poet. "
                             "Write a short, heartfelt Diwali blessing "
-                            "in {Language} focusing on {God}. "
+                            "in {Language}. "
                             "Dedicated to a kind-hearted girl Kusuma. "
                             "Return only the plain text poem/message."
                         ),
@@ -347,7 +333,7 @@ with col2:
                 chain = pt | llm
 
                 response = chain.invoke(
-                    {"Language": Language, "God": God}
+                    {"Language": Language}
                 )
 
                 if hasattr(response, "content"):
@@ -394,29 +380,23 @@ with col2:
             "### 🎨 Your Personalized Diwali Artwork"
         )
 
-        # Detailed iconographical description map to fix deity rendering issues
-        deity_descriptions = {
-            "Lord Ganesh": "A majestic divine depiction of Lord Ganesha with an elephant head, gentle expression, holding modak and a blessing pose",
-            "Hanuman": "A powerful divine depiction of Lord Hanuman as a revered vanara deity with a golden crown, calm devoted expression, holding a golden mace (gada)",
-            "Lord Shiva": "A divine depiction of Lord Shiva with serene meditative face, blue throat, third eye on forehead, crescent moon and flowing hair, wearing rudraksha beads",
-            "Sai Baba": "A serene spiritual depiction of Shirdi Sai Baba wearing traditional white robes and head cloth, sitting peacefully with a gentle blessing hand gesture",
-            "Goddess Durga": "A majestic depiction of Goddess Durga seated on a divine lion, serene face with multiple arms holding traditional sacred weapons and blessing",
-            "Goddess Lakshmi": "A divine depiction of Goddess Lakshmi seated on a lotus flower, wearing rich traditional attire, coins and gold flowing from her hands",
-            "Goddess Saraswathi": "A graceful depiction of Goddess Saraswati seated on a white lotus playing a traditional veena instrument, wearing pure white garments",
-            "Lord Ram": "A royal divine depiction of Lord Rama with a majestic golden crown, gentle noble expression, holding a sacred bow and arrow"
-        }
-
-        specific_deity_prompt = deity_descriptions.get(God, f"A respectful divine depiction of {God}")
-
         image_prompt = (
-            f"A beautiful premium-quality digital painting of an Indian Diwali celebration. "
-            f"{specific_deity_prompt}. "
-            "Surrounded by glowing traditional clay diyas, colorful fireworks in a starry night sky, "
-            "elegant golden rangoli art on the floor, fresh marigold flower garlands, and warm golden festive lighting. "
+            "A beautiful premium-quality digital painting "
+            "of an Indian Diwali celebration with glowing "
+            "traditional diyas, colorful fireworks in a "
+            "starry night sky, elegant golden rangoli, "
+            "marigold flowers, warm golden light and "
+            "festive decorations. "
+
             f"The dominant color theme is {Color}. "
-            "Professional religious greeting-card artwork, square composition, highly detailed, vibrant colors, masterpiece. "
-            "Leave clear uncluttered dark space near the bottom for a greeting banner. "
-            "Do not generate any words, letters or watermark."
+
+            "Professional greeting-card artwork, "
+            "square composition, detailed and vibrant. "
+
+            "Leave clear space near the bottom for "
+            "a greeting banner. "
+
+            "The image should have happy Deepavali message written on it"
         )
 
         with st.spinner(
@@ -431,7 +411,7 @@ with col2:
 
                 st.image(
                     generated_image,
-                    caption=f"Diwali artwork featuring {God}",
+                    caption="Diwali celebration artwork",
                     use_container_width=True
                 )
 
