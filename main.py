@@ -1,4 +1,3 @@
-
 import io
 import requests
 import streamlit as st
@@ -76,12 +75,11 @@ st.markdown(
 # 3. GOOGLE API KEY
 # =====================================================
 
-# Configure this in Streamlit Cloud Secrets.
 GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 
 
 # =====================================================
-# 4. OVHCLOUD IMAGE GENERATION
+# 4. OVHCLOUD IMAGE GENERATION & DEITY PROMPTS
 # =====================================================
 
 OVH_IMAGE_URL = (
@@ -89,9 +87,48 @@ OVH_IMAGE_URL = (
     "kepler.ai.cloud.ovh.net/api/text2image"
 )
 
+DEITY_PROMPTS = {
+    "Lord Ganesh": (
+        "A majestic, divine depiction of Lord Ganesha with an elephant head, "
+        "gentle expression, golden crown, holding a modak, soft warm divine halo, "
+        "surrounded by glowing diyas and marigold flowers."
+    ),
+    "Hanuman": (
+        "A divine and powerful depiction of Lord Hanuman as a noble vanara warrior "
+        "with a serene and devoted expression, muscular physique, wearing traditional ornaments, "
+        "holding a golden mace (gada), with a glowing divine aura and sacred background."
+    ),
+    "Lord Shiva": (
+        "A majestic depiction of Lord Shiva as a serene ascetic god with ash on his forehead, "
+        "a crescent moon and matted hair, a glowing third eye, peaceful meditative expression, "
+        "blue neck shade, holding a trishula (trident), divine spiritual aura."
+    ),
+    "Sai Baba": (
+        "A revered spiritual saint in traditional white robe and headwear, "
+        "serene, compassionate and peaceful expression, sitting gracefully with a warm divine background."
+    ),
+    "Goddess Durga": (
+        "A powerful multi-armed warrior goddess riding a majestic lion, "
+        "holding sacred weapons and a lotus, wearing rich traditional silk attire and jewelry, "
+        "divine glowing aura."
+    ),
+    "Goddess Lakshmi": (
+        "A radiant divine goddess of wealth seated on a pink lotus flower, "
+        "gently showering gold coins from her hand, wearing rich traditional Indian attire and jewelry, "
+        "surrounded by glowing lamps."
+    ),
+    "Goddess Saraswathi": (
+        "A graceful goddess of knowledge seated on a white lotus, playing a classical veena instrument, "
+        "wearing a pure white silk saree, calm and wise expression, serene divine background."
+    ),
+    "Lord Ram": (
+        "A noble and heroic prince with a divine crown, calm and righteous expression, "
+        "holding a traditional bow and arrow, glowing radiant aura and festive background."
+    )
+}
+
 
 def load_font(size):
-
     font_paths = [
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
         "/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf",
@@ -108,28 +145,19 @@ def load_font(size):
 
 
 def fit_font(draw, text, max_width, starting_size):
-
     size = starting_size
-
     while size >= 12:
-
         font = load_font(size)
         bbox = draw.textbbox((0, 0), text, font=font)
-
         if bbox[2] - bbox[0] <= max_width:
             return font
-
         size -= 2
-
     return load_font(12)
 
 
 def add_diwali_text(image):
-
     image = image.convert("RGB")
-
     width, height = image.size
-
     draw = ImageDraw.Draw(image, "RGBA")
 
     banner_width = int(width * 0.90)
@@ -137,11 +165,8 @@ def add_diwali_text(image):
 
     left = (width - banner_width) // 2
     top = height - banner_height - int(height * 0.045)
-
     right = left + banner_width
     bottom = top + banner_height
-
-    # Greeting banner
 
     draw.rounded_rectangle(
         (left, top, right, bottom),
@@ -152,30 +177,19 @@ def add_diwali_text(image):
     )
 
     title = "HAPPY DIWALI"
-
     subtitle = "Wishing You Happiness & Prosperity"
 
     title_font = fit_font(
-        draw,
-        title,
-        int(banner_width * 0.88),
-        max(24, width // 13)
+        draw, title, int(banner_width * 0.88), max(24, width // 13)
     )
-
     subtitle_font = fit_font(
-        draw,
-        subtitle,
-        int(banner_width * 0.90),
-        max(14, width // 30)
+        draw, subtitle, int(banner_width * 0.90), max(14, width // 30)
     )
 
     center_x = width // 2
 
     draw.text(
-        (
-            center_x,
-            top + int(banner_height * 0.36)
-        ),
+        (center_x, top + int(banner_height * 0.36)),
         title,
         font=title_font,
         fill=(255, 211, 91, 255),
@@ -185,10 +199,7 @@ def add_diwali_text(image):
     )
 
     draw.text(
-        (
-            center_x,
-            top + int(banner_height * 0.73)
-        ),
+        (center_x, top + int(banner_height * 0.73)),
         subtitle,
         font=subtitle_font,
         fill=(255, 255, 255, 255),
@@ -199,7 +210,6 @@ def add_diwali_text(image):
 
 
 def generate_diwali_image(prompt):
-
     headers = {
         "Accept": "application/octet-stream",
         "Content-Type": "application/json"
@@ -208,8 +218,8 @@ def generate_diwali_image(prompt):
     payload = {
         "prompt": prompt,
         "negative_prompt": (
-            "blurry, low quality, distorted faces, "
-            "bad anatomy, watermark, random letters"
+            "blurry, low quality, distorted faces, deformed limbs, "
+            "bad anatomy, watermark, text, letters, ugly, mutant"
         )
     }
 
@@ -222,10 +232,7 @@ def generate_diwali_image(prompt):
 
     response.raise_for_status()
 
-    image = Image.open(
-        io.BytesIO(response.content)
-    )
-
+    image = Image.open(io.BytesIO(response.content))
     image.load()
 
     return add_diwali_text(image)
@@ -237,21 +244,10 @@ def generate_diwali_image(prompt):
 
 col1, col2 = st.columns(2, gap="large")
 
-
 with col1:
-
     st.title("Happy Diwali Kusuma🥰❤️")
-
-    st.write(
-        "🪔 Here you can create your personalized "
-        "Diwali wishes🌸❤️"
-    )
-
-    st.write(
-        "Please select all options and click on "
-        "generate button😊"
-    )
-
+    st.write("🪔 Here you can create your personalized Diwali wishes🌸❤️")
+    st.write("Please select all options and click on generate button😊")
     st.markdown("---")
 
     Color = st.selectbox(
@@ -279,10 +275,7 @@ with col1:
     )
 
     st.markdown("")
-
-    generate_button = st.button(
-        "✨ Generate My Diwali Wish ✨"
-    )
+    generate_button = st.button("✨ Generate My Diwali Wish ✨")
 
 
 # =====================================================
@@ -290,40 +283,21 @@ with col1:
 # =====================================================
 
 with col2:
-
     st.subheader("🌟 Diwali Blessing for you🥰😊")
 
     if not generate_button:
-
         st.markdown("### 🪔✨ Happy Diwali ✨🪔")
-
-        st.write(
-            "Select your favorite color, God and language."
-        )
-
-        st.write(
-            "Your personalized Diwali blessing and "
-            "beautiful AI-generated artwork will appear here. ❤️"
-        )
-
+        st.write("Select your favorite color, God and language.")
+        st.write("Your personalized Diwali blessing and beautiful AI-generated artwork will appear here. ❤️")
         st.markdown("### 🪔 🌸 🎆 ❤️")
 
     else:
-
-        # =============================================
-        # TEXT GENERATION - YOUR ORIGINAL CODE
-        # =============================================
-
         st.markdown("### 🪔 Your Personalized Blessing")
 
-        with st.spinner(
-            "✨ Lighting up diyas and crafting your wish..."
-        ):
-
+        with st.spinner("✨ Lighting up diyas and crafting your wish..."):
             try:
-
                 llm = ChatGoogleGenerativeAI(
-                    model="gemini-3.5-flash-lite",
+                    model="gemini-2.5-flash",
                     temperature=0.7,
                     google_api_key=GOOGLE_API_KEY
                 )
@@ -346,24 +320,9 @@ with col2:
                 )
 
                 chain = pt | llm
+                response = chain.invoke({"Language": Language, "God": God})
 
-                response = chain.invoke(
-                    {"Language": Language, "God": God}
-                )
-
-                if hasattr(response, "content"):
-                    message = response.content
-                else:
-                    message = str(response)
-
-                if isinstance(message, list):
-                    message = "".join(
-                        [
-                            item.get("text", "")
-                            for item in message
-                            if isinstance(item, dict)
-                        ]
-                    )
+                message = response.content if hasattr(response, "content") else str(response)
 
                 st.markdown(
                     f"""
@@ -381,51 +340,27 @@ with col2:
                 )
 
             except Exception as e:
+                st.error(f"Wish generation failed: {e}")
 
-                st.error(
-                    f"Wish generation failed: {e}"
-                )
+        st.markdown("### 🎨 Your Personalized Diwali Artwork")
 
-
-        # =============================================
-        # IMAGE GENERATION - OVHCLOUD
-        # =============================================
-
-        st.markdown(
-            "### 🎨 Your Personalized Diwali Artwork"
-        )
+        god_description = DEITY_PROMPTS.get(God, f"A respectful divine depiction of {God}.")
 
         image_prompt = (
-            "A beautiful premium-quality digital painting "
-            "of an Indian Diwali celebration with glowing "
-            "traditional diyas, colorful fireworks in a "
-            "starry night sky, elegant golden rangoli, "
-            "marigold flowers, warm golden light and "
-            "festive decorations. "
-
+            "A high-resolution professional digital painting "
+            "of an Indian Diwali celebration with glowing traditional diyas, "
+            "colorful fireworks in a starry night sky, elegant golden rangoli, "
+            "marigold flowers, warm golden ambient light and festive decorations. "
             f"The dominant color theme is {Color}. "
-
-            f"Include a respectful, beautiful divine "
-            f"depiction of {God} blessing the scene. "
-
-            "Professional greeting-card artwork, "
-            "square composition, detailed and vibrant. "
-
-            "Leave clear space near the bottom for "
-            "a greeting banner. "
-
-            "Do not generate any words, letters or watermark."
+            f"{god_description} "
+            "Cinematic composition, highly detailed, vibrant colors, masterpiece. "
+            "Leave clear space near the bottom for a greeting banner. "
+            "Do not generate any random text, words, letters or watermark."
         )
 
-        with st.spinner(
-            "🎨 Creating a beautiful Diwali image for Kusuma..."
-        ):
-
+        with st.spinner(f"🎨 Creating a beautiful Diwali image featuring {God}..."):
             try:
-
-                generated_image = generate_diwali_image(
-                    image_prompt
-                )
+                generated_image = generate_diwali_image(image_prompt)
 
                 st.image(
                     generated_image,
@@ -433,15 +368,8 @@ with col2:
                     use_container_width=True
                 )
 
-                # Download generated image
-
                 image_buffer = io.BytesIO()
-
-                generated_image.save(
-                    image_buffer,
-                    format="PNG"
-                )
-
+                generated_image.save(image_buffer, format="PNG")
                 image_buffer.seek(0)
 
                 st.download_button(
@@ -452,50 +380,14 @@ with col2:
                     use_container_width=True
                 )
 
-                st.success(
-                    "Your personalized Diwali artwork is ready! ❤️"
-                )
+                st.success("Your personalized Diwali artwork is ready! ❤️")
 
             except requests.exceptions.Timeout:
-
-                st.error(
-                    "Image generation timed out. Please try again."
-                )
-
+                st.error("Image generation timed out. Please try again.")
             except requests.exceptions.HTTPError as e:
-
-                status_code = (
-                    e.response.status_code
-                    if e.response is not None
-                    else "Unknown"
-                )
-
-                st.error(
-                    f"OVHcloud image generation failed: HTTP {status_code}"
-                )
-
+                status_code = e.response.status_code if e.response is not None else "Unknown"
+                st.error(f"OVHcloud image generation failed: HTTP {status_code}")
                 if e.response is not None:
                     st.code(e.response.text[:2000])
-
-                if status_code == 429:
-
-                    st.warning(
-                        "Image generation rate limit reached. "
-                        "Please wait before trying again."
-                    )
-
-                elif status_code in (401, 403):
-
-                    st.warning(
-                        "OVHcloud rejected anonymous access. "
-                        "An authenticated endpoint may be required."
-                    )
-
             except Exception as e:
-
-                st.error(
-                    f"Image generation failed: {e}"
-                )
-
-
-
+                st.error(f"Image generation failed: {e}")
