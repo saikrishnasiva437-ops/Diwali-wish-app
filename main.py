@@ -263,17 +263,13 @@ with col1:
         "Pick your favorite God😊",
         [
             "Lord Ganesh",
-            "Lord Hanuman",
+            "Hanuman",
             "Lord Shiva",
-            "Lord Venkateshwara Swami",
             "Sai Baba",
-            "Durga maa",
-            "Lakshmi Devi",
-            "Saraswathi Devi",
-            "Peddamma Thalli",
-            "Ayyappa Swami",
-            "Lord Ram",
-            "Sita Maa"
+            "Goddess Durga",
+            "Goddess Lakshmi",
+            "Goddess Saraswathi",
+            "Lord Ram"
         ]
     )
 
